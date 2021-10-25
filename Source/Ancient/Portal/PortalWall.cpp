@@ -27,9 +27,9 @@ bool APortalWall::GetCoordinate(FTransform& OutTransform, const FVector& InLocat
 	
 	RelocatePortalCoordinate(RelativePortalLocation.Y, RelativePortalLocation.Z);
 
-	PortalLocation = GetActorTransform().TransformPosition(RelativePortalLocation);
-	if(!IsOverlap(PortalLocation,InType))		
+	if(!IsOverlap(RelativePortalLocation,InType))		
 	{
+		PortalLocation = GetActorTransform().TransformPosition(RelativePortalLocation);
 		PortalLocation += GetActorForwardVector() * 0.25;
 		OutTransform = FTransform(GetActorRotation(),PortalLocation, OutTransform.GetScale3D());		
 		return true;		
@@ -50,7 +50,8 @@ bool APortalWall::IsOverlap(const FVector& InLocation, const EPortalType Type)
 
 	if(PortalLocations.Find(OppositeType))
 	{
-		return IsIntersect(InLocation,PortalLocations[OppositeType]);
+		const FVector OtherLocation = GetActorTransform().InverseTransformPosition(PortalLocations[OppositeType]);
+		return IsIntersect(InLocation,OtherLocation);
 	}
 
 	// If opposite type of portal don't exist, no overlap occured

@@ -47,8 +47,6 @@ void APortalPlayerController::SpawnCloneCharacter(const FTransform& InPortal, co
 			LOG("RelativeTransform: ");
 			LOG(RelativeTransform.ToString());
 			
-			RelativeTransform.GetLocation() * Portal.GetUnitAxis( EAxis::X ) * -1;
-			
 			LOG("RelativeTransform AFTER: ");
 			LOG((RelativeTransform.GetLocation() * Portal.GetUnitAxis( EAxis::X ) * -1).ToString());
 
