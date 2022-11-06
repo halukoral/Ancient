@@ -56,7 +56,7 @@ protected:
 		
 	bool IsResourceEnough() const;
 
-	void SetupPlaceable() const;
+	void SetupPlaceable();
 
 	void GetPreviewMeshTransform();
 
@@ -103,29 +103,26 @@ private:
 	float PlaceableUpdateInterval = 0.3f;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Build Data | Grid")
-	int32 XGridSize = 400;
+	int32 XGridSize = 200;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Build Data | Grid")
-	int32 YGridSize	= 400;
+	int32 YGridSize	= 200;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Build Data | Grid")
-	int32 ZGridSize	= 400;
+	int32 ZGridSize	= 200;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Build Data | Grid")
 	int32 RotationSnap = 90;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Build Data | Grid")
-	int32 ForwardOffset = 350;
+	int32 RotationOffset = 90;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Build Data | Grid")
-	int32 RotationOffset = 90;
-	
-	UPROPERTY(EditDefaultsOnly, Category = "Build Data | Grid")
-	FVector	LocationOffset = FVector(0.f, 0.f, 30.f);
-	
-	FVector	Location = FVector::ZeroVector;
+	int32 ForwardOffset = 400;
 	
 	FRotator Rotation = FRotator::ZeroRotator;
+	FVector	Location = FVector::ZeroVector;
+	FVector	LocationOffset = FVector(0.f, 0.f, 0.f);
 	
 	EPlaceableType PlaceableType;
 	

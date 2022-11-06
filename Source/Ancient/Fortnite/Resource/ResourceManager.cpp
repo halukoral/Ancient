@@ -11,7 +11,6 @@ UResourceManager::UResourceManager()
 	// We should specify which resources should be used
 	Resources.Add(EResourceTypes::E_Ice, 500);
 	Resources.Add(EResourceTypes::E_Wood, 500);
-	Resources.Add(EResourceTypes::E_Metal, 500);
 	Resources.Add(EResourceTypes::E_Stone, 500);
 }
 
@@ -82,13 +81,13 @@ void UResourceManager::ChangeResourceType()
 		CurrentResource = EResourceTypes::E_Wood;
 		break;
 	case EResourceTypes::E_Wood:
-		CurrentResource = EResourceTypes::E_Metal;
-		break;
-	case EResourceTypes::E_Metal:
 		CurrentResource = EResourceTypes::E_Stone;
 		break;
 	case EResourceTypes::E_Stone:
 		CurrentResource = EResourceTypes::E_Ice;
+		break;
+	case EResourceTypes::E_Count: 
+	default:
 		break;
 	}
 }

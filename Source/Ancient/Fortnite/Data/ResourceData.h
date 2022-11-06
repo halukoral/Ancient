@@ -11,18 +11,18 @@ struct FResourceData : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FText Name;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	EResourceTypes Type;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UTexture2D*	Icon;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	FLinearColor GhostBuildingColor;
 
-	UPROPERTY(BlueprintReadWrite)
-	UMaterial* MeshMaterial;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UMaterialInstance* MeshMaterial;
 };

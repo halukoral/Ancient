@@ -42,16 +42,16 @@ class AAncientCharacter : public ACharacter
 	UCameraComponent* FollowCamera = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category = Camera)
-	float TargetArmLength_Walk = 650;
+	float TargetArmLength_Walk = 750;
 
 	UPROPERTY(EditDefaultsOnly, Category = Camera)
-	float TargetArmLength_Run = 800;
+	float TargetArmLength_Run = 900;
 
 	UPROPERTY(EditDefaultsOnly, Category = Camera)
-	float TargetArmLength_Fly = 1000;
+	float TargetArmLength_Fly = 1200;
 
 	UPROPERTY(EditDefaultsOnly, Category = Camera)
-	float TargetArmLength_FlyRough = 1200;
+	float TargetArmLength_FlyRough = 1400;
 
 public:
 

@@ -12,12 +12,15 @@ struct FPlaceableMeshData : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FVector LocationOffset = FVector(0.f, 0.f, 0.f);
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	EPlaceableType PlaceableType;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	EResourceTypes ResourceType;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	UStaticMesh* Mesh;
 };

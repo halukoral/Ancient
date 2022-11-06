@@ -109,7 +109,7 @@ void UPlaceableManager::ChangePreviewMesh()
 	}
 }
 
-void UPlaceableManager::SetupPlaceable() const
+void UPlaceableManager::SetupPlaceable()
 {
 	if (Placeable.Get() && ResourceManager.Get())
 	{
@@ -128,6 +128,7 @@ void UPlaceableManager::SetupPlaceable() const
 				Placeable->SetGhostColor(ResourceData->GhostBuildingColor);
 				Placeable->SetMesh(Data->Mesh);
 				Placeable->SetupWidgets(BuildingResourceData->MaxHealth, BuildingResourceData->RequiredAmount, ResourceData->Icon);
+				LocationOffset = Data->LocationOffset;
 				return;
 			}
 		}
@@ -188,7 +189,7 @@ void UPlaceableManager::SelectPlaceable(const uint8 InValue)
 
 void UPlaceableManager::Place()
 {
-	if (FortniteComponent.Get() && Placeable.Get() && !Placeable->IsOverlapping() && IsResourceEnough())
+	if (FortniteComponent.Get() && Placeable.Get() && Placeable->IsOverlapping() == false && IsResourceEnough())
 	{
 		if (FortniteComponent->GetPlaceableOnSight())
 		{

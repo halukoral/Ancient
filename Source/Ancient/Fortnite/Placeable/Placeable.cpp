@@ -57,7 +57,7 @@ void APlaceable::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class
 		if (OverlappingPlaceable.IsValid() && OverlappingPlaceable->bPlaced)
 		{
 			OverlappingPlaceables.Add(OverlappingPlaceable.Get());
-			if (!bOverlapping)
+			if (bOverlapping == false)
 			{
 				bOverlapping = true;
 				W_Menu->SetVisibility(ESlateVisibility::Hidden);
