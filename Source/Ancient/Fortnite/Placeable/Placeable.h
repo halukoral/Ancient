@@ -71,15 +71,23 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Building Widget")
 	UWidgetComponent* WC_Menu = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Building Widget")
 	UPlaceableMenuWidget* W_Menu = nullptr;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Building Widget")
 	UWidgetComponent* WC_HealthBar = nullptr;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Building Widget")
 	UHealthBarWidget* W_HealthBar = nullptr;
 															
 	UPROPERTY(EditDefaultsOnly, Category = "Building")	
 	UStaticMeshComponent* MeshComponent = nullptr;
+
+	UPROPERTY()	
 	UMaterialInstance* MI_Mesh = nullptr;
+
+	UPROPERTY()	
 	UMaterialInstanceDynamic* MID_Mesh = nullptr;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Building")	

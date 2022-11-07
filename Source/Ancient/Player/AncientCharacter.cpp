@@ -223,7 +223,7 @@ void AAncientCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerI
 
 	for(const auto Component : GetComponents())
 	{
-		if(IControllable* Controllable = Cast<IControllable>(Component))
+		if (IControllable* Controllable = Cast<IControllable>(Component))
 		{
 			Controllable->SetupInput(PlayerInputComponent);
 		}
@@ -241,7 +241,7 @@ void AAncientCharacter::Turn(float Value)
 
 void AAncientCharacter::TurnAtRate(float Rate)
 {
-	if(Rate != 0.f)
+	if (Rate != 0.f)
 	{
 		OnPlayerTurned.Broadcast();
 	}
@@ -307,7 +307,7 @@ void AAncientCharacter::MoveForward(float Value)
 
 void AAncientCharacter::MoveRight(float Value)
 {
-	if(ClimbComponent)
+	if (ClimbComponent)
 	{
 		if (ClimbComponent->IsJumpBack())
 		{

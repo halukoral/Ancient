@@ -6,13 +6,14 @@
 #include "GameFramework/Character.h"
 #include "AncientCharacter.generated.h"
 
+class UClimbComponent;
+class URadarComponent;
+
 class UCameraComponent;
 class UCapsuleComponent;
-class URadarComponent;
 class USphereComponent;
 class USpringArmComponent;
 
-class UClimbComponent;
 
 /* Functions that start with the Notify_ called generally when the animation of the corresponding action is finished
  * See: EpicCharacterAnimInstance.h (you can see anim notifiers where these functions triggered)
@@ -58,6 +59,8 @@ public:
 	FOnPlayerMoved OnPlayerMoved;
 	FOnPlayerTurned OnPlayerTurned;
 	
+	UClimbComponent* GetClimbComponent() const { return ClimbComponent; }
+
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	float BaseTurnRate = 45.f;
@@ -65,8 +68,6 @@ public:
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, Category = Camera)
 	float BaseLookUpRate = 45.f;
-	
-	UClimbComponent* GetClimbComponent() const { return ClimbComponent; }
 	
 	AAncientCharacter();
 

@@ -45,8 +45,6 @@ public:
 
 	void Action_Place();
 
-	void Action_AnyKey(FKey Key);
-
 	void Action_Wheel(float InValue);
 	
 	/* Switch Player States between Construction and Combat	*/

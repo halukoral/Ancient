@@ -22,13 +22,13 @@ void UFortniteComponent::BeginPlay()
 	Super::BeginPlay();
 
 	Player = Cast<ACharacter>(GetOwner());
-	if(Player.IsValid())
+	if (Player.IsValid())
 	{
 		PlayerState = EPlayerMode::E_Combat;
 		
 		ResourceManager = Player->FindComponentByClass<UResourceManager>();
 		PlaceableManager = Player->FindComponentByClass<UPlaceableManager>();
-		if(ResourceManager == nullptr || PlaceableManager == nullptr)
+		if (ResourceManager == nullptr || PlaceableManager == nullptr)
 		{
 			return;
 		}
@@ -56,7 +56,6 @@ void UFortniteComponent::SetupInput(class UInputComponent* PlayerInputComponent)
 	PlayerInputComponent->BindAction("Fortnite_AddResource",	IE_Pressed, this, &UFortniteComponent::Action_AddResource);
 	PlayerInputComponent->BindAction("Fortnite_RemoveResource", IE_Pressed, this, &UFortniteComponent::Action_RemoveResource);
 	PlayerInputComponent->BindAction("Fortnite_PlaceBuilding",	IE_Pressed, this, &UFortniteComponent::Action_Place);
-	PlayerInputComponent->BindAction("Fortnite_AnyKey",			IE_Pressed, this, &UFortniteComponent::Action_AnyKey);
 
 	PlayerInputComponent->BindAxis("Fortnite_Wheel", this, &UFortniteComponent::Action_Wheel);
 }
@@ -112,9 +111,9 @@ void UFortniteComponent::Action_ChangeState()
 
 void UFortniteComponent::Action_ChangeResource()
 {
-	if(PlayerState == EPlayerMode::E_Construction)
+	if (PlayerState == EPlayerMode::E_Construction)
 	{
-		if(ResourceManager.IsValid())
+		if (ResourceManager.IsValid())
 		{
 			ResourceManager->SelectNextWidget();
 		}
@@ -123,7 +122,7 @@ void UFortniteComponent::Action_ChangeResource()
 
 void UFortniteComponent::Action_AddResource()
 {
-	if(ResourceManager.IsValid())
+	if (ResourceManager.IsValid())
 	{
 		ResourceManager->AddResource(100);
 	}
@@ -131,7 +130,7 @@ void UFortniteComponent::Action_AddResource()
 
 void UFortniteComponent::Action_RemoveResource()
 {
-	if(ResourceManager.IsValid())
+	if (ResourceManager.IsValid())
 	{
 		ResourceManager->RemoveResource(100);
 	}
@@ -139,37 +138,15 @@ void UFortniteComponent::Action_RemoveResource()
 
 void UFortniteComponent::Action_Place()
 {
-	if(PlaceableManager.IsValid())
+	if (PlaceableManager.IsValid())
 	{
 		PlaceableManager->Place();
 	}
 }
 
-// TODO get any key properly
-void UFortniteComponent::Action_AnyKey(FKey Key)
-{
-	// if (InKey == EKeys::AnyKey)
-	// {
-	// 	// Is there any key that is down
-	// 	for (const TPair<FKey, FKeyState>& KeyStatePair : KeyStateMap)
-	// 	{
-	// 		if (KeyStatePair.Key.IsDigital() && KeyStatePair.Value.bDown)
-	// 		{
-	// 			return true;
-	// 		}
-	// 	}
-	// }
-	// else if (FKeyState const* const KeyState = KeyStateMap.Find(InKey))
-	// {
-	// 	return KeyState->bDown;
-	// }
-	//
-	// return false;
-}
-
 void UFortniteComponent::Action_Wheel(float InValue)
 {
-	if(PlaceableManager.IsValid() && InValue != 0)
+	if (PlaceableManager.IsValid() && InValue != 0)
 	{
 		PlaceableManager->SelectPlaceable(InValue);
 	}
@@ -186,7 +163,7 @@ void UFortniteComponent::SetPlayerState(const EPlayerMode InState)
 
 void UFortniteComponent::OnStateChanged() const
 {
-	if(PlaceableManager.IsValid() && FortniteWidget.IsValid())
+	if (PlaceableManager.IsValid() && FortniteWidget.IsValid())
 	{
 		if (PlayerState == EPlayerMode::E_Combat)
 		{

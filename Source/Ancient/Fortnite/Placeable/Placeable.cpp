@@ -41,7 +41,7 @@ void APlaceable::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if(WC_HealthBar && WC_Menu)
+	if (WC_HealthBar && WC_Menu)
 	{
 		W_Menu = Cast<UPlaceableMenuWidget>(WC_Menu->GetUserWidgetObject());
 		W_HealthBar = Cast<UHealthBarWidget>(WC_HealthBar->GetUserWidgetObject());
@@ -51,7 +51,7 @@ void APlaceable::BeginPlay()
 
 void APlaceable::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if(OtherActor != this)
+	if (OtherActor != this)
 	{
 		OverlappingPlaceable = Cast<APlaceable>(OtherActor);
 		if (OverlappingPlaceable.IsValid() && OverlappingPlaceable->bPlaced)
@@ -69,7 +69,7 @@ void APlaceable::OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class
 
 void APlaceable::OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if(OtherActor != this)
+	if (OtherActor != this)
 	{
 		OverlappingPlaceable = Cast<APlaceable>(OtherActor);
 		if (OverlappingPlaceable != nullptr && OverlappingPlaceable->bPlaced)
@@ -148,20 +148,20 @@ void APlaceable::SetCanPlaceable(const bool CanPlaceable)
 
 void APlaceable::SetMesh(UStaticMesh* InMesh)
 {
-	if(InMesh != nullptr && InMesh == MeshComponent->GetStaticMesh())
+	if (InMesh != nullptr && InMesh == MeshComponent->GetStaticMesh())
 	{
 		return;
 	}
 	
-	if(InMesh)
+	if (InMesh)
 	{
 		MeshComponent->SetStaticMesh(InMesh);
 	}
 	
-	if(MeshComponent->GetStaticMesh())
+	if (MeshComponent->GetStaticMesh())
 	{
 		MID_Mesh = MeshComponent->CreateDynamicMaterialInstance(0, MeshComponent->GetMaterial(0));
-		if(MID_Mesh)
+		if (MID_Mesh)
 		{
 			MID_Mesh->SetVectorParameterValue(FName(TEXT("Color")), GhostColor);
 		}

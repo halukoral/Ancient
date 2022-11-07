@@ -7,8 +7,11 @@
 
 void UAnimNotify_Climb::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
-	if (AAncientCharacter* Character = Cast<AAncientCharacter>(MeshComp->GetOwner()))
+	if (const AAncientCharacter* Character = Cast<AAncientCharacter>(MeshComp->GetOwner()))
 	{
-		Character->GetClimbComponent()->Notify_HangingFinished();
+		if(UClimbComponent* ClimbComponent = Character->GetClimbComponent())
+		{
+			ClimbComponent->Notify_HangingFinished();			
+		}
 	}
 }

@@ -15,8 +15,6 @@ class ANCIENT_API UAncientCharacterAnimInstance : public UCharacterAnimInstance
 
 public:
 	
-	virtual void NativeInitializeAnimation() override;
-	
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 protected:
@@ -69,5 +67,4 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsHangingCornerRight = false;
 
-	TWeakObjectPtr<AAncientCharacter> AncientCharacter = nullptr;
 };

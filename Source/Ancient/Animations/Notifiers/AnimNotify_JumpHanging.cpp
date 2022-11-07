@@ -9,17 +9,20 @@ void UAnimNotify_JumpHanging::Notify(USkeletalMeshComponent* MeshComp, UAnimSequ
 {
 	if (const AAncientCharacter* Character = Cast<AAncientCharacter>(MeshComp->GetOwner()))
 	{
-		if (Character->GetClimbComponent()->IsHangingJumpLeft())
+		if(UClimbComponent* ClimbComponent = Character->GetClimbComponent())
 		{
-			Character->GetClimbComponent()->Notify_HangingJumpLeft(false);
-		}
-		else if (Character->GetClimbComponent()->IsHangingJumpRight())
-		{
-			Character->GetClimbComponent()->Notify_HangingJumpRight(false);
-		}
-		if (Character->GetClimbComponent()->IsJumpUp())
-		{
-			Character->GetClimbComponent()->Notify_JumpUp(false);
+			if (ClimbComponent->IsHangingJumpLeft())
+			{
+				ClimbComponent->Notify_HangingJumpLeft(false);
+			}
+			else if (ClimbComponent->IsHangingJumpRight())
+			{
+				ClimbComponent->Notify_HangingJumpRight(false);
+			}
+			if (ClimbComponent->IsJumpUp())
+			{
+				ClimbComponent->Notify_JumpUp(false);
+			}			
 		}
 	}
 }

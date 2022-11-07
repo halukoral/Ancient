@@ -9,13 +9,16 @@ void UAnimNotify_TurnHanging::Notify(USkeletalMeshComponent* MeshComp, UAnimSequ
 {
 	if (const AAncientCharacter* Character = Cast<AAncientCharacter>(MeshComp->GetOwner()))
 	{
-		if (Character->GetClimbComponent()->IsHangingCornerLeft())
+		if(UClimbComponent* ClimbComponent = Character->GetClimbComponent())
 		{
-			Character->GetClimbComponent()->Notify_HangingCornerLeft(false);
-		}
-		else if (Character->GetClimbComponent()->IsHangingCornerRight())
-		{
-			Character->GetClimbComponent()->Notify_HangingCornerRight(false);
+			if (ClimbComponent->IsHangingCornerLeft())
+			{
+				ClimbComponent->Notify_HangingCornerLeft(false);
+			}
+			else if (ClimbComponent->IsHangingCornerRight())
+			{
+				ClimbComponent->Notify_HangingCornerRight(false);
+			}			
 		}
 	}
 }

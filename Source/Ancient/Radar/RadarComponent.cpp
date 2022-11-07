@@ -33,7 +33,7 @@ void URadarComponent::BeginPlay()
 	Super::BeginPlay();
 
 	Player = Cast<AAncientCharacter>(GetOwner());
-	if(Player.IsValid())
+	if (Player.IsValid())
 	{
 		Player->OnPlayerMoved.AddUObject(this, &URadarComponent::OnPlayerMoved);
 		Player->OnPlayerTurned.AddUObject(this, &URadarComponent::OnPlayerTurned);
@@ -46,9 +46,9 @@ void URadarComponent::BeginPlay()
 		GetOverlappingActors(OverlappingActors);
 		for(const auto Actor : OverlappingActors)
 		{
-			if(ACharacter* Character = Cast<ACharacter>(Actor))
+			if (ACharacter* Character = Cast<ACharacter>(Actor))
 			{
-				if(Character != Player)
+				if (Character != Player)
 				{
 					AddEnemy(Character);			
 				}
@@ -65,9 +65,9 @@ void URadarComponent::BeginPlay()
 void URadarComponent::OnEnterPlayerSight(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if(OtherActor != GetOwner())
+	if (OtherActor != GetOwner())
 	{
-		if(ACharacter* Character = Cast<ACharacter>(OtherActor))
+		if (ACharacter* Character = Cast<ACharacter>(OtherActor))
 		{
 			AddEnemy(Character);
 		}
@@ -77,9 +77,9 @@ void URadarComponent::OnEnterPlayerSight(UPrimitiveComponent* OverlappedComp, AA
 void URadarComponent::OnLeavePlayerSight(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if(OtherActor != GetOwner())
+	if (OtherActor != GetOwner())
 	{
-		if(ACharacter* Character = Cast<ACharacter>(OtherActor))
+		if (ACharacter* Character = Cast<ACharacter>(OtherActor))
 		{
 			RemoveEnemy(Character);
 		}
@@ -327,7 +327,7 @@ void URadarComponent::AddEnemy(ACharacter* Enemy)
 
 void URadarComponent::RemoveEnemy(ACharacter* Enemy)
 {
-	if(RadarWidget.IsValid())
+	if (RadarWidget.IsValid())
 	{
 		const int32 EnemyIndex = Enemies.Find(Enemy);
 		if (EnemyIndex >= 0)
@@ -497,7 +497,7 @@ void URadarComponent::UpdatePositionForEnemy(ACharacter* Enemy) const
 		if (RadarWidget.IsValid())
 		{
 			const TArray<UEnemyWidget*> EnemyWidgets = RadarWidget->GetEnemyWidgets();
-			if(EnemyWidgets.Num() > 0)
+			if (EnemyWidgets.Num() > 0)
 			{
 				UEnemyWidget* EnemyWidget = EnemyWidgets[EnemyIndex];
 				if (IsInRadarSight)
@@ -528,7 +528,7 @@ void URadarComponent::UpdateDistanceForEnemy(ACharacter* Enemy) const
 		if (RadarWidget.IsValid())
 		{
 			const TArray<UEnemyWidget*> EnemyWidgets = RadarWidget->GetEnemyWidgets();
-			if(EnemyWidgets.Num() > 0)
+			if (EnemyWidgets.Num() > 0)
 			{
 				if (const UEnemyWidget* EnemyWidget = EnemyWidgets[EnemyIndex]) 
 				{

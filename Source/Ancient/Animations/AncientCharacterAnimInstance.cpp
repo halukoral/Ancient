@@ -6,51 +6,46 @@
 #include "Ancient/Player/Components/Climb/ClimbComponent.h"
 #include "Ancient/Player/AncientCharacter.h"
 
-void UAncientCharacterAnimInstance::NativeInitializeAnimation()
-{
-	Super::NativeInitializeAnimation();
-
-	AncientCharacter = Cast<AAncientCharacter>(TryGetPawnOwner());
-}
-
 void UAncientCharacterAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
-	if (AncientCharacter.IsValid())
+	if (const AAncientCharacter* AncientCharacter = Cast<AAncientCharacter>(TryGetPawnOwner()))
 	{
-		/* ------- Hanging ------- */
-		bIsHanging = AncientCharacter->GetClimbComponent()->IsHanging();
-
-		bIsClimbing = AncientCharacter->GetClimbComponent()->IsClimbing();
-
-		bIsJumpingUp = AncientCharacter->GetClimbComponent()->IsJumpUp();
-
-		bIsJumpBack = AncientCharacter->GetClimbComponent()->IsJumpBack();
-			
-		bIsHangingLeft = AncientCharacter->GetClimbComponent()->IsHangingLeft();
-
-		bIsHangingRight = AncientCharacter->GetClimbComponent()->IsHangingRight();
-
-		bIsHangingJumpLeft = AncientCharacter->GetClimbComponent()->IsHangingJumpLeft();
-
-		bIsHangingJumpRight = AncientCharacter->GetClimbComponent()->IsHangingJumpRight();
-
-		bIsHangingCornerLeft = AncientCharacter->GetClimbComponent()->IsHangingCornerLeft();
-
-		bIsHangingCornerRight = AncientCharacter->GetClimbComponent()->IsHangingCornerRight();
-		/* ------- ~Hanging~ ------- */
-
-		bIsInAir = AncientCharacter->GetMovementComponent()->IsFalling();
-
-		bIsFlying = AncientCharacter->GetMovementComponent()->IsFlying() && !bIsHanging && !bIsClimbing;
-
-		bIsCrouching = AncientCharacter->GetMovementComponent()->IsCrouching();
+		if(const UPawnMovementComponent* MovementComponent = AncientCharacter->GetMovementComponent())
+		{
+			bIsCrouching = MovementComponent->IsCrouching();
+			bIsInAir = MovementComponent->IsFalling();
+			bIsFlying = MovementComponent->IsFlying() && !bIsHanging && !bIsClimbing;
+		}
 
 		bIsInteracting = AncientCharacter->IsInteracting();
-
 		bIsInteractingLoop = AncientCharacter->IsInteractingLoop();
-
 		bIsCelebrating = AncientCharacter->IsCelebrating();
+		
+		if(const UClimbComponent* ClimbComponent = AncientCharacter->GetClimbComponent())
+		{
+			/* ------- Hanging ------- */
+			bIsHanging = ClimbComponent->IsHanging();
+
+			bIsClimbing = ClimbComponent->IsClimbing();
+
+			bIsJumpingUp = ClimbComponent->IsJumpUp();
+
+			bIsJumpBack = ClimbComponent->IsJumpBack();
+				
+			bIsHangingLeft = ClimbComponent->IsHangingLeft();
+
+			bIsHangingRight = ClimbComponent->IsHangingRight();
+
+			bIsHangingJumpLeft = ClimbComponent->IsHangingJumpLeft();
+
+			bIsHangingJumpRight = ClimbComponent->IsHangingJumpRight();
+
+			bIsHangingCornerLeft = ClimbComponent->IsHangingCornerLeft();
+
+			bIsHangingCornerRight = ClimbComponent->IsHangingCornerRight();
+			/* ------- ~Hanging~ ------- */
+		}
 	}
 }
