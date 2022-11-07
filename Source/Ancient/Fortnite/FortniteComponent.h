@@ -71,8 +71,6 @@ private:
 
 	TWeakObjectPtr<ACharacter> Player = nullptr;
 
-	TWeakObjectPtr<APlaceable> Placeable = nullptr;
-
 	TWeakObjectPtr<APlaceable> PlaceableOnSight = nullptr;
 
 	TWeakObjectPtr<UPlaceableManager> PlaceableManager = nullptr;

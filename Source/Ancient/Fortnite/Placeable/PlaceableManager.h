@@ -9,7 +9,7 @@
 class UCameraComponent;
 class UDataTable;
 
-class ACharacter;
+class AAncientCharacter;
 class APlaceable;
 class UFortniteComponent;
 class UPlaceableWidget;
@@ -53,20 +53,24 @@ protected:
 	*  the same rotation as our player however it snaps 90 degrees
 	*  so you are not able to reach any rotations in between */
 	int32 ToSnapRotation(const float InValue) const;
-		
+
+	void OnPlayerMoved();
+
+	void OnPlayerTurned();
+	
 	bool IsResourceEnough() const;
+
+	bool CalculateGridTransform();
 
 	void SetupPlaceable();
 
-	void GetPreviewMeshTransform();
-
-	void SetPreviewMeshTransform();
+	void UpdatePreviewMeshTransform();
 
 	void OnStartPreviewMesh();
 
 	void SpawnPreviewMesh();
 
-	void ChangePreviewMesh();
+	void UpdatePreviewMesh();
 
 	void ChangeType(const float InValue);
 
@@ -75,7 +79,7 @@ protected:
 
 private:	
 		
-	TWeakObjectPtr<ACharacter> Player = nullptr;
+	TWeakObjectPtr<AAncientCharacter> Player = nullptr;
 	
 	TWeakObjectPtr<APlaceable> Placeable = nullptr;
 
@@ -125,6 +129,4 @@ private:
 	FVector	LocationOffset = FVector(0.f, 0.f, 0.f);
 	
 	EPlaceableType PlaceableType;
-	
-	FTimerHandle TimerHandle;
 };

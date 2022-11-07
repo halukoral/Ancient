@@ -6,7 +6,6 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/Character.h"
 
-#include "Data/ResourceData.h"
 #include "Enums/PlayerMode.h"
 #include "Placeable/Placeable.h"
 #include "Placeable/PlaceableManager.h"
@@ -23,7 +22,7 @@ void UFortniteComponent::BeginPlay()
 	Super::BeginPlay();
 
 	Player = Cast<ACharacter>(GetOwner());
-	if(Player.Get())
+	if(Player.IsValid())
 	{
 		PlayerState = EPlayerMode::E_Combat;
 		
@@ -35,7 +34,7 @@ void UFortniteComponent::BeginPlay()
 		}
 		
 		FortniteWidget = CreateWidget<UFortniteWidget>(GetWorld(), FortniteWidgetClass);
-		if (FortniteWidget.Get())
+		if (FortniteWidget.IsValid())
 		{
 			FortniteWidget->SetResourceManager(ResourceManager.Get());
 			FortniteWidget->SetPlaceableManager(PlaceableManager.Get());
@@ -77,25 +76,24 @@ void UFortniteComponent::SightTrace()
 
 	GetWorld()->LineTraceSingleByChannel(OutHit, Start, End, ECC_Visibility, CollisionParams);
 
-	Placeable = Cast<APlaceable>(OutHit.GetActor());
-	if (Placeable.Get())
+	if (APlaceable* Placeable = Cast<APlaceable>(OutHit.GetActor()))
 	{
-		if (IsValid(PlaceableOnSight.Get()) && Placeable != PlaceableOnSight)
+		if (PlaceableOnSight.IsValid() && Placeable != PlaceableOnSight.Get())
 		{
 			PlaceableOnSight->OnLeavePlayerSight();
 			PlaceableOnSight = Placeable;
 			PlaceableOnSight->OnEnterPlayerSight();
 		}
-		else if (!IsValid(PlaceableOnSight.Get()))
+		else if (PlaceableOnSight.IsValid() == false)
 		{
 			PlaceableOnSight = Placeable;
 			PlaceableOnSight->OnEnterPlayerSight();
 		}
 	}
-	else if (IsValid(PlaceableOnSight.Get()))
+	else if (PlaceableOnSight.IsValid())
 	{
 		PlaceableOnSight->OnLeavePlayerSight();
-		PlaceableOnSight = nullptr;
+		PlaceableOnSight.Reset();
 	}
 }
 
@@ -116,7 +114,7 @@ void UFortniteComponent::Action_ChangeResource()
 {
 	if(PlayerState == EPlayerMode::E_Construction)
 	{
-		if(ResourceManager.Get())
+		if(ResourceManager.IsValid())
 		{
 			ResourceManager->SelectNextWidget();
 		}
@@ -125,7 +123,7 @@ void UFortniteComponent::Action_ChangeResource()
 
 void UFortniteComponent::Action_AddResource()
 {
-	if(ResourceManager.Get())
+	if(ResourceManager.IsValid())
 	{
 		ResourceManager->AddResource(100);
 	}
@@ -133,7 +131,7 @@ void UFortniteComponent::Action_AddResource()
 
 void UFortniteComponent::Action_RemoveResource()
 {
-	if(ResourceManager.Get())
+	if(ResourceManager.IsValid())
 	{
 		ResourceManager->RemoveResource(100);
 	}
@@ -141,7 +139,7 @@ void UFortniteComponent::Action_RemoveResource()
 
 void UFortniteComponent::Action_Place()
 {
-	if(PlaceableManager.Get())
+	if(PlaceableManager.IsValid())
 	{
 		PlaceableManager->Place();
 	}
@@ -171,7 +169,7 @@ void UFortniteComponent::Action_AnyKey(FKey Key)
 
 void UFortniteComponent::Action_Wheel(float InValue)
 {
-	if(PlaceableManager.Get() && InValue != 0)
+	if(PlaceableManager.IsValid() && InValue != 0)
 	{
 		PlaceableManager->SelectPlaceable(InValue);
 	}

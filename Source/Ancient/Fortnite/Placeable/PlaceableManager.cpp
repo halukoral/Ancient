@@ -5,7 +5,6 @@
 
 #include "Camera/CameraComponent.h"
 #include "Components/ActorComponent.h"
-#include "GameFramework/Character.h"
 
 #include "Ancient/Fortnite/FortniteComponent.h"
 #include "Ancient/Fortnite/Data/PlaceableMeshData.h"
@@ -16,6 +15,7 @@
 #include "Ancient/Fortnite/Enums/ResourceType.h"
 #include "Ancient/Fortnite/Resource/ResourceManager.h"
 #include "Ancient/Fortnite/Widgets/PlaceableWidget.h"
+#include "Ancient/Player/AncientCharacter.h"
 
 UPlaceableManager::UPlaceableManager()
 {
@@ -26,36 +26,76 @@ void UPlaceableManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Player = Cast<ACharacter>(GetOwner());
-	if(Player.Get())
+	Player = Cast<AAncientCharacter>(GetOwner());
+	if (Player.IsValid())
 	{
 		PlayerCamera = Player->FindComponentByClass<UCameraComponent>();
 		FortniteComponent = Player->FindComponentByClass<UFortniteComponent>();
 		ResourceManager = Player->FindComponentByClass<UResourceManager>();
 
-		if(PlayerCamera.IsValid() == false || FortniteComponent.IsValid() == false || ResourceManager.IsValid() == false)
+		if (PlayerCamera.IsValid() == false || FortniteComponent.IsValid() == false || ResourceManager.IsValid() == false)
 		{
 			return;
 		}
+		
+		Player->OnPlayerMoved.AddUObject(this, &UPlaceableManager::OnPlayerMoved);
+		Player->OnPlayerTurned.AddUObject(this, &UPlaceableManager::OnPlayerTurned);
 
 		ResourceManager->OnResourceChanged.AddDynamic(this, &UPlaceableManager::OnResourceValueChanged);
+
 		PlaceableType = EPlaceableType::E_Floor;
 
-		if(PlaceableWidgets.Num() > 0 && FortniteComponent->GetPlayerState() == EPlayerMode::E_Construction)
+		if (PlaceableWidgets.Num() > 0 && FortniteComponent->GetPlayerState() == EPlayerMode::E_Construction)
 		{
 			SelectPreviewMesh(true);
 		}
 	}
 }
 
+void UPlaceableManager::OnPlayerMoved()
+{
+	if (FortniteComponent->GetPlayerState() == EPlayerMode::E_Construction)
+	{
+		if (FortniteComponent->GetPlaceableOnSight() == nullptr)
+		{
+			if (Placeable.IsValid())
+			{
+				UpdatePreviewMesh();
+			}
+			else
+			{
+				SpawnPreviewMesh();
+			}
+		}
+	}
+}
+
+void UPlaceableManager::OnPlayerTurned()
+{
+	if (FortniteComponent->GetPlayerState() == EPlayerMode::E_Construction)
+	{
+		if (FortniteComponent->GetPlaceableOnSight() == nullptr)
+		{
+			if (Placeable.IsValid())
+			{
+				UpdatePreviewMesh();
+			}
+			else
+			{
+				SpawnPreviewMesh();
+			}
+		}
+	}
+}
+
 void UPlaceableManager::SelectPreviewMesh(const bool InValue)
 {
-	if(UPlaceableWidget* Widget = PlaceableWidgets[PlaceableType])
+	if (UPlaceableWidget* Widget = PlaceableWidgets[PlaceableType])
 	{
 		Widget->ToggleWidget(InValue);
 	}
 	
-	if(InValue)
+	if (InValue)
 	{
 		OnStartPreviewMesh();
 	}
@@ -63,55 +103,64 @@ void UPlaceableManager::SelectPreviewMesh(const bool InValue)
 
 void UPlaceableManager::OnStartPreviewMesh()
 {
-	Placeable.IsValid() ? ChangePreviewMesh() : SpawnPreviewMesh();  
+	Placeable.IsValid() ? UpdatePreviewMesh() : SpawnPreviewMesh();  
 }
 
 void UPlaceableManager::OnStopPreviewMesh()
 {
 	SelectPreviewMesh(false);
-	if (Placeable.Get())
+	if (Placeable.IsValid())
 	{
-		GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
 		Placeable->SetActorHiddenInGame(true);
-		Placeable->SetActorTickEnabled(false);
 	}
 }
 
 void UPlaceableManager::SpawnPreviewMesh()
 {
-	GetPreviewMeshTransform();
+	CalculateGridTransform();
+	
 	const FActorSpawnParameters SpawnInfo;
 	Placeable = GetWorld()->SpawnActor<APlaceable>(PlaceableClass, Location, Rotation, SpawnInfo);
-	if (Placeable.Get())
+	if (Placeable.IsValid())
 	{
 		SetupPlaceable();
-		Placeable->SetCanPlaceable(IsResourceEnough());
+		if (Placeable->IsOverlapping())
+		{
+			OnStopPreviewMesh();
+		}
+		else
+		{
+			Placeable->SetCanPlaceable(IsResourceEnough());
+		}
 	}
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UPlaceableManager::SetPreviewMeshTransform, PlaceableUpdateInterval, true);
 }
 
-void UPlaceableManager::ChangePreviewMesh()
+void UPlaceableManager::UpdatePreviewMesh()
 {
-	if (Placeable.Get())
+	if (Placeable.IsValid())
 	{
-		if(Placeable->IsHidden())
-		{
-			SetPreviewMeshTransform();
-			if(GetWorld()->GetTimerManager().TimerExists(TimerHandle) == false)
-			{
-				GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UPlaceableManager::SetPreviewMeshTransform, PlaceableUpdateInterval, true);
-			}
-			Placeable->SetActorHiddenInGame(false);
-			Placeable->SetActorTickEnabled(true);
-		}
+		UpdatePreviewMeshTransform();
+				
 		SetupPlaceable();
-		Placeable->SetCanPlaceable(IsResourceEnough());
+		if (Placeable->IsOverlapping())
+		{
+			OnStopPreviewMesh();
+		}
+		else
+		{
+			if (Placeable->IsHidden())
+			{
+				Placeable->SetActorHiddenInGame(false);
+			}
+			
+			Placeable->SetCanPlaceable(IsResourceEnough());
+		}
 	}
 }
 
 void UPlaceableManager::SetupPlaceable()
 {
-	if (Placeable.Get() && ResourceManager.Get())
+	if (Placeable.IsValid() && ResourceManager.IsValid())
 	{
 		const auto ResourceData = ResourceManager->GetResourceData();
 		const EResourceTypes ResourceType = ResourceManager->GetCurrentResourceType();
@@ -123,13 +172,13 @@ void UPlaceableManager::SetupPlaceable()
 		
 		for (const FPlaceableMeshData* Data : MeshData)
 		{
-			if(Data->PlaceableType == PlaceableType && Data->ResourceType == ResourceType)
+			if (Data->PlaceableType == PlaceableType && Data->ResourceType == ResourceType)
 			{
 				Placeable->SetGhostColor(ResourceData->GhostBuildingColor);
 				Placeable->SetMesh(Data->Mesh);
 				Placeable->SetupWidgets(BuildingResourceData->MaxHealth, BuildingResourceData->RequiredAmount, ResourceData->Icon);
 				LocationOffset = Data->LocationOffset;
-				return;
+				break;
 			}
 		}
 	}
@@ -137,7 +186,7 @@ void UPlaceableManager::SetupPlaceable()
 
 void UPlaceableManager::OnResourceValueChanged(const EResourceTypes InType, const int32 InAmount)
 {
-	if (Placeable.Get())
+	if (Placeable.IsValid())
 	{
 		SetupPlaceable();
 		Placeable->SetCanPlaceable(IsResourceEnough());
@@ -189,7 +238,7 @@ void UPlaceableManager::SelectPlaceable(const uint8 InValue)
 
 void UPlaceableManager::Place()
 {
-	if (FortniteComponent.Get() && Placeable.Get() && Placeable->IsOverlapping() == false && IsResourceEnough())
+	if (FortniteComponent.IsValid() && Placeable.IsValid() && Placeable->IsOverlapping() == false && IsResourceEnough())
 	{
 		if (FortniteComponent->GetPlaceableOnSight())
 		{
@@ -201,16 +250,11 @@ void UPlaceableManager::Place()
 		FortniteComponent->SetPlaceableOnSight(Placeable.Get());
 		
 		const FName RowName = GetEnumValueAsString( ResourceManager->GetCurrentResourceType() );
-		
-		if(const auto  PlaceableResourceData = DT_PlaceableResource->FindRow<FPlaceableResourceData>(RowName, ""))
+		if (const auto  PlaceableResourceData = DT_PlaceableResource->FindRow<FPlaceableResourceData>(RowName, ""))
 		{
 			ResourceManager->RemoveResource(PlaceableResourceData->RequiredAmount);
-
-			GetWorld()->GetTimerManager().ClearTimer(TimerHandle);
-
 			Placeable->PlaceStart(*PlaceableResourceData,*ResourceManager->GetResourceData());
-
-			SpawnPreviewMesh();
+			Placeable.Reset();
 		}
 	}
 }
@@ -218,8 +262,7 @@ void UPlaceableManager::Place()
 bool UPlaceableManager::IsResourceEnough() const
 {
 	const FName RowName = GetEnumValueAsString( ResourceManager->GetCurrentResourceType() );
-	
-	if(const auto PlaceableResourceData = DT_PlaceableResource->FindRow<FPlaceableResourceData>(RowName, ""))
+	if (const auto PlaceableResourceData = DT_PlaceableResource->FindRow<FPlaceableResourceData>(RowName, ""))
 	{
 		return ResourceManager->GetCurrentResourceAmount() >= PlaceableResourceData->RequiredAmount;			
 	}
@@ -229,7 +272,7 @@ bool UPlaceableManager::IsResourceEnough() const
 void UPlaceableManager::ChangeType(const float InValue)
 {
 	// Select Next Building
-	if(InValue > 0)
+	if (InValue > 0)
 	{
 		switch (PlaceableType)
 		{
@@ -245,7 +288,7 @@ void UPlaceableManager::ChangeType(const float InValue)
 		}
 	}
 	// Select Previous Building
-	else if(InValue < 0)
+	else if (InValue < 0)
 	{
 		switch (PlaceableType)
 		{
@@ -262,24 +305,31 @@ void UPlaceableManager::ChangeType(const float InValue)
 	}
 }
 
-void UPlaceableManager::SetPreviewMeshTransform()
+void UPlaceableManager::UpdatePreviewMeshTransform()
 {
-	GetPreviewMeshTransform();
-	if(Placeable.Get())
+	if (Placeable.IsValid())
 	{
-		Placeable->SetActorLocationAndRotation(Location, Rotation);
+		if (CalculateGridTransform())
+		{
+			Placeable->SetActorLocationAndRotation(Location, Rotation);			
+		}
 	}
 }
 
-void UPlaceableManager::GetPreviewMeshTransform()
+bool UPlaceableManager::CalculateGridTransform()
 {
-	if(Player.Get() && PlayerCamera.Get())
+	if (Player.IsValid() && PlayerCamera.IsValid())
 	{
+		const FVector OldLocation = Location;
+		const FRotator OldRotation = Rotation;
+		
 		const FVector PlayerLookAt = Player->GetActorLocation() + (PlayerCamera->GetForwardVector() * ForwardOffset);
-
 		Location = ToGridLocation(PlayerLookAt) + LocationOffset;
 		Rotation.Yaw = ToSnapRotation(PlayerCamera->GetComponentRotation().Yaw) + RotationOffset;
+
+		return OldLocation != Location || OldRotation != Rotation;
 	}
+	return false;
 }
 
 FVector UPlaceableManager::ToGridLocation(const FVector& InValue) const
