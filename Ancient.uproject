@@ -1,32 +1,22 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "5.0",
+	"EngineAssociation": "5.4",
 	"Category": "",
 	"Description": "",
 	"Modules": [
 		{
 			"Name": "Ancient",
 			"Type": "Runtime",
-			"LoadingPhase": "Default",
-			"AdditionalDependencies": [
-				"Engine",
-				"UMG"
-			]
+			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [
 		{
-			"Name": "Bridge",
+			"Name": "ModelingToolsEditorMode",
 			"Enabled": true,
-			"SupportedTargetPlatforms": [
-				"Win64",
-				"Mac",
-				"Linux"
+			"TargetAllowList": [
+				"Editor"
 			]
-		},
-		{
-			"Name": "EnhancedInput",
-			"Enabled": true
 		}
 	]
 }
